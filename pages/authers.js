@@ -31,7 +31,7 @@ function AuthorHome() {
       <div className="d-flex flex-wrap">
         {/* TODO: map over books here using BookCard component */}
         {authors.map((author) => (
-          <AuthorCard key={author.firebaseKey} authorObj={author} />
+          <AuthorCard key={author.firebaseKey} authorObj={author} onUpdate={getAllTheBooks} />
         ))}
       </div>
 
