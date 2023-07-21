@@ -4,62 +4,60 @@ import Link from 'next/link';
 import { Button } from 'react-bootstrap';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import { booksOnSale, getBooks } from '../api/bookData';
+import { favoriteAuthors, getAuthors } from '../api/authorData';
 import { useAuth } from '../utils/context/authContext';
-import BookCard from '../components/BookCard';
+import AuthorCard from '../components/AuthorCard';
 
-function Home() {
+function AuthorHome() {
   // TODO: Set a state for books
-  const [books, setBooks] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const [filter, setFilter] = useState();
 
   // TODO: Get user ID using useAuth Hook
   const { user } = useAuth();
 
+  // TODO: create a function that makes the API call to get all the books
+  const getAllTheAuthors = () => {
+    getAuthors(user.uid).then(setAuthors);
+  };
+
+  const getAllFavAuthors = () => {
+    favoriteAuthors(user.uid).then(setAuthors);
+  };
+
   const handleToggle = (e) => {
     setFilter(e);
-  };
-
-  // TODO: create a function that makes the API call to get all the books
-  const getAllTheBooks = () => {
-    getBooks(user.uid).then(setBooks);
-  };
-
-  const getBooksOnSale = () => {
-    booksOnSale(user.uid).then(setBooks);
   };
 
   // TODO: make the call to the API to get all the books on component render
   useEffect(() => {
     if (filter === 2) {
-      getBooksOnSale();
+      getAllFavAuthors();
     } else {
-      getAllTheBooks();
+      getAllTheAuthors();
     }
-    getAllTheBooks();
   }, [filter]);
 
   return (
     <div className="text-center my-4">
       <div style={{ margin: '10px' }}>
-        <Link href="/book/new" passHref>
-          <Button>Add A Book</Button>
+        <Link href="/author/new" passHref>
+          <Button>Add A Author</Button>
         </Link>
       </div>
-
       <ToggleButtonGroup type="radio" name="options" defaultValue={1} onChange={handleToggle}>
         <ToggleButton id="tbg-radio-1" value={1}>
-          All Books
+          All Authors
         </ToggleButton>
         <ToggleButton id="tbg-radio-2" value={2}>
-          Books on sale
+          Favorite Authors
         </ToggleButton>
       </ToggleButtonGroup>
 
       <div className="d-flex flex-wrap">
         {/* TODO: map over books here using BookCard component */}
-        {books.map((book) => (
-          <BookCard key={book.firebaseKey} bookObj={book} onUpdate={getAllTheBooks} />
+        {authors.map((author) => (
+          <AuthorCard key={author.firebaseKey} authorObj={author} onUpdate={getAllTheAuthors} />
         ))}
       </div>
 
@@ -67,4 +65,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default AuthorHome;
